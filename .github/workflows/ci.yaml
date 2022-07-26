@@ -1,0 +1,49 @@
+name: CI
+
+on: 
+  pull_request:
+  push:
+      branches:
+        - master
+      
+env:
+  flutter-version: "3.0.5"
+
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter-version }}
+          cache: true
+          cache-key: flutter-${{ env.flutter-version }}
+
+      - name: Prefill build cache
+        uses: actions/cache@v3
+        with:
+          key: build_cache_${{ hashFiles('lib/**', 'pubspec.yaml') }}
+          path: .dart_tool/
+          restore-keys: |
+            build_cache_
+
+      - name: Load dependencies
+        run: flutter pub get
+
+      - name: Generate files
+        run: flutter packages pub run build_runner build
+
+      - name: Lint code
+        run: flutter analyze
+
+      - name: Check code format
+        run: flutter format . --set-exit-if-changed
+
+      - name: Run tests
+        run: flutter test
