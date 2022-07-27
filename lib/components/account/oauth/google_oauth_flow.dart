@@ -31,7 +31,6 @@ class GoogleOAuthFlow extends OAuthFlow with LoggerMixin {
     log.info('Handle google OAuth authorization');
 
     final authCode = await _authorizationService.showOAuthWebView(
-      callbackUrl: callbackUrl,
       clientId: credentials.clientId,
       redirectUrl: callbackUrl,
       scopes: [

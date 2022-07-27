@@ -32,14 +32,13 @@ class AuthorizationService {
 
   /// TODO refactor when FlutterWebAuth plugin is removed
   Future<String> showOAuthWebView({
-    required String callbackUrl,
     required String clientId,
     required String redirectUrl,
     required List<String> scopes,
     String? loginHint,
   }) async {
     final authResult = await FlutterWebAuth.authenticate(
-      callbackUrlScheme: callbackUrl,
+      callbackUrlScheme: redirectUrl,
       url: buildAuthorizationUrl(
         clientId: clientId,
         redirectUrl: redirectUrl,

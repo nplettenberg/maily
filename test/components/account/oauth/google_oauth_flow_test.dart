@@ -39,6 +39,16 @@ void main() {
 
   group('requestFreshToken', () {
     test('should get oauth token', () async {
+      const expectedAuthorizationCode = 'wow123';
+
+      final expectedToken = OAuthToken(
+        accessToken: 'token',
+        expiresIn: 500,
+        refreshToken: 'refreshToken',
+        scope: 'scopes',
+        tokenType: '',
+      );
+
       const credentials = OAuthClientCredentials(
         clientId: 'test',
         clientSecret: 'veryWow',
@@ -59,14 +69,50 @@ void main() {
 
       addTearDown(container.dispose);
 
-      await container.read(googleAuthFlowProvider).requestFreshToken();
+      when(
+        () => authorizationService.showOAuthWebView(
+          clientId: any(named: 'clientId'),
+          redirectUrl: any(named: 'redirectUrl'),
+          scopes: any(named: 'scopes'),
+        ),
+      ).thenAnswer((_) async => expectedAuthorizationCode);
+
+      when(
+        () => authenticationService.getOAuthToken(
+          authorizationCode: any(named: 'authorizationCode'),
+          callbackUrl: any(named: 'callbackUrl'),
+        ),
+      ).thenAnswer(
+        (_) async => TokenResponse(
+          profile: GoogleProfile(
+            email: 'test@test.de',
+          ),
+          token: expectedToken,
+        ),
+      );
+
+      final result =
+          await container.read(googleAuthFlowProvider).requestFreshToken();
+
+      expect(result.token, equals(expectedToken));
+      expect(result.email, isNotEmpty);
+      expect(result.email, equals('test@test.de'));
 
       verify(
         () => authorizationService.showOAuthWebView(
-          callbackUrl: '',
-          clientId: '',
-          redirectUrl: '',
-          scopes: [],
+          clientId: 'test',
+          redirectUrl: 'test:/',
+          scopes: [
+            kGmailScope,
+            ...kOpenIdConnectScopes,
+          ],
+        ),
+      );
+
+      verify(
+        () => authenticationService.getOAuthToken(
+          authorizationCode: expectedAuthorizationCode,
+          callbackUrl: 'test:/',
         ),
       );
     });
