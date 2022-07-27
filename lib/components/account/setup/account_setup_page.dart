@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maily/components/components.dart';
@@ -39,16 +41,18 @@ class AccountSetupPage extends ConsumerWidget {
               child: ElevatedButton(
                 child: const Text('Sign in with google!'),
                 onPressed: () async {
-                  final token =
+                  final authResult =
                       await ref.watch(googleAuthFlowProvider).authenticate();
 
                   ref.watch(accountListProvider.notifier).add(
                         Account(
-                          id: '123',
-                          address: 'test@gmail.com',
+                          id: Random().nextInt(1000).toString(),
+                          address: authResult.email,
                           accountType: AccountType.google,
                         ),
-                        AccountCredentials.oauth(token: token),
+                        AccountCredentials.oauth(
+                          token: authResult.token,
+                        ),
                       );
                 },
               ),

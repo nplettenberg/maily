@@ -1,104 +1,77 @@
-import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
-import 'package:http/http.dart' as http;
+import 'package:maily/api/api.dart';
 import 'package:maily/components/components.dart';
 import 'package:maily/core/core.dart';
 
 final googleAuthFlowProvider = Provider<GoogleOAuthFlow>(
   (ref) {
-    final env = ref.watch(environmentProvider);
-
     return GoogleOAuthFlow(
-      appClientId: env.google.clientId,
-      appClientSecret: env.google.clientSecret,
+      credentials: ref.watch(environmentProvider).google,
+      authenticationService: ref.watch(googleAuthenticationServiceProvider),
+      authorizationService: ref.watch(googleAuthorizationServiceProvider),
     );
   },
 );
 
 class GoogleOAuthFlow extends OAuthFlow with LoggerMixin {
   GoogleOAuthFlow({
-    required super.appClientId,
-    required super.appClientSecret,
-  });
+    required super.credentials,
+    required AuthenticationService authenticationService,
+    required AuthorizationService authorizationService,
+  })  : _authenticationService = authenticationService,
+        _authorizationService = authorizationService;
+
+  final AuthenticationService _authenticationService;
+  final AuthorizationService _authorizationService;
 
   @override
-  Future<OAuthToken?> requestFreshToken({
+  Future<OAuthFlowResult> requestFreshToken({
     String? email,
   }) async {
-    final callbackUrlScheme = appClientId.split('.').reversed.join('.');
+    log.info('Handle google OAuth authorization');
 
-    final authRequest = Uri.https(
-      'accounts.google.com',
-      '/o/oauth2/v2/auth',
-      {
-        'response_type': 'code',
-        'client_id': appClientId,
-        'redirect_uri': '$callbackUrlScheme:/',
-        'scope': 'https://mail.google.com/',
-        if (email != null) 'login_hint': email,
-      },
+    final authCode = await _authorizationService.showOAuthWebView(
+      callbackUrl: callbackUrl,
+      clientId: credentials.clientId,
+      redirectUrl: callbackUrl,
+      scopes: [
+        kGmailScope,
+        ...kOpenIdConnectScopes,
+      ],
     );
 
-    log.info(authRequest.toString());
+    log.info('Got authorization code :$authCode');
 
-    final authResult = await FlutterWebAuth.authenticate(
-      url: authRequest.toString(),
-      callbackUrlScheme: callbackUrlScheme,
+    log.info('Requesting OAuth2 Token for google API');
+
+    final response = await _authenticationService.getOAuthToken(
+      authorizationCode: authCode,
+      callbackUrl: callbackUrl,
     );
 
-    final String? authCode = Uri.parse(authResult).queryParameters['code'];
-
-    if (authCode == null) {
-      throw Exception('Could not retrieve auth code for google auth');
+    if (response.profile == null) {
+      log.warning('''
+        Got no profile information with OAuth2 token!
+        This can lead to errors to later point of time.
+        This should never happen!
+      ''');
     }
 
-    final tokenResponse = await http.post(
-      Uri.https('oauth2.googleapis.com', '/token'),
-      body: {
-        'client_id': appClientId,
-        'client_secret': appClientSecret,
-        'redirect_uri': '$callbackUrlScheme:/',
-        'grant_type': 'authorization_code',
-        'code': authCode,
-      },
-    );
-
-    final tokenJson = jsonDecode(tokenResponse.body);
-
-    return OAuthToken(
-      accessToken: tokenJson['access_token'],
-      refreshToken: tokenJson['refresh_token'],
-      tokenType: tokenJson['token_type'],
-      scope: tokenJson['scope'],
-      expiresIn: tokenJson['expires_in'],
+    return OAuthFlowResult(
+      email: response.profile!.email,
+      token: response.token,
     );
   }
 
   @override
-  Future<OAuthToken?> refreshToken(OAuthToken token) async {
-    final callbackUrlScheme = appClientId.split('.').reversed.join('.');
-
-    final response = await http.post(
-      Uri.https('oauth2.googleapis.com', '/token'),
-      body: {
-        'client_id': appClientId,
-        'client_secret': appClientSecret,
-        'redirect_url': '$callbackUrlScheme:/',
-        'grant_type': 'refresh_token',
-        'refresh_token': token.refreshToken,
-      },
-    );
-
-    final tokenJson = jsonDecode(response.body);
-
-    return OAuthToken(
-      accessToken: tokenJson['access_token'],
-      refreshToken: tokenJson['refresh_token'],
-      tokenType: tokenJson['token_type'],
-      scope: tokenJson['scope'],
-      expiresIn: tokenJson['expires_in'],
+  Future<OAuthToken> refreshToken(OAuthToken token) async {
+    return _authenticationService.refreshOAuthToken(
+      refreshToken: token.refreshToken,
+      callbackUrl: callbackUrl,
     );
   }
+
+  @override
+  String get callbackUrl =>
+      '${credentials.clientId.split('.').reversed.join('.')}:/';
 }

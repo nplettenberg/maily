@@ -4,7 +4,7 @@ import 'package:maily/core/core.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/accounts',
+    initialLocation: '/splash',
     routes: ref.watch(routesProvider),
   );
 });

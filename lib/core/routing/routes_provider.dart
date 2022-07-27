@@ -6,36 +6,47 @@ import 'package:maily/components/components.dart';
 final routesProvider = Provider<List<GoRoute>>((_) {
   return [
     GoRoute(
-      name: MailOverviewPage.name,
-      path: '/mails',
+      name: SplashPage.name,
+      path: '/splash',
       pageBuilder: (_, state) {
         return MaterialPage(
           key: state.pageKey,
-          child: const MailOverviewPage(),
+          child: const SplashPage(),
         );
       },
     ),
     GoRoute(
-      name: AccountListPage.name,
-      path: '/accounts',
-      pageBuilder: (_, state) {
-        return MaterialPage(
-          key: state.pageKey,
-          child: const AccountListPage(),
-        );
-      },
-      routes: [
-        GoRoute(
-          name: AccountSetupPage.name,
-          path: 'add',
-          pageBuilder: (_, state) {
-            return MaterialPage(
-              key: state.pageKey,
-              child: const AccountSetupPage(),
-            );
-          },
-        ),
-      ],
-    ),
+        name: MailOverviewPage.name,
+        path: '/mails',
+        pageBuilder: (_, state) {
+          return MaterialPage(
+            key: state.pageKey,
+            child: const MailOverviewPage(),
+          );
+        },
+        routes: [
+          GoRoute(
+            name: AccountListPage.name,
+            path: 'accounts',
+            pageBuilder: (_, state) {
+              return MaterialPage(
+                key: state.pageKey,
+                child: const AccountListPage(),
+              );
+            },
+            routes: [
+              GoRoute(
+                name: AccountSetupPage.name,
+                path: 'add',
+                pageBuilder: (_, state) {
+                  return MaterialPage(
+                    key: state.pageKey,
+                    child: const AccountSetupPage(),
+                  );
+                },
+              ),
+            ],
+          ),
+        ]),
   ];
 });
