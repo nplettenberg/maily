@@ -16,13 +16,13 @@ final googleAuthFlowProvider = Provider<GoogleOAuthFlow>(
 class GoogleOAuthFlow extends OAuthFlow with LoggerMixin {
   GoogleOAuthFlow({
     required super.credentials,
-    required AuthenticationService authenticationService,
-    required AuthorizationService authorizationService,
+    required GoogleAuthenticationService authenticationService,
+    required GoogleAuthorizationService authorizationService,
   })  : _authenticationService = authenticationService,
         _authorizationService = authorizationService;
 
-  final AuthenticationService _authenticationService;
-  final AuthorizationService _authorizationService;
+  final GoogleAuthenticationService _authenticationService;
+  final GoogleAuthorizationService _authorizationService;
 
   @override
   Future<OAuthFlowResult> requestFreshToken({

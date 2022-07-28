@@ -8,8 +8,8 @@ import 'package:maily/components/components.dart';
 part 'authentication_service.freezed.dart';
 part 'authentication_service.g.dart';
 
-class AuthenticationService {
-  const AuthenticationService({
+class GoogleAuthenticationService {
+  const GoogleAuthenticationService({
     required OAuthClientCredentials clientCredentials,
   }) : _clientCredentials = clientCredentials;
 

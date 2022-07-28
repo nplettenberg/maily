@@ -3,12 +3,12 @@ import 'package:maily/api/api.dart';
 import 'package:maily/components/components.dart';
 
 final googleAuthenticationServiceProvider =
-    Provider<AuthenticationService>((ref) {
-  return AuthenticationService(
+    Provider<GoogleAuthenticationService>((ref) {
+  return GoogleAuthenticationService(
     clientCredentials: ref.watch(environmentProvider).google,
   );
 });
 
-final googleAuthorizationServiceProvider = Provider<AuthorizationService>(
-  (_) => const AuthorizationService(),
+final googleAuthorizationServiceProvider = Provider<GoogleAuthorizationService>(
+  (_) => const GoogleAuthorizationService(),
 );

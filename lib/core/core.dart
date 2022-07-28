@@ -1,3 +1,4 @@
+export 'error_catcher.dart';
 export 'logging/logger.dart';
 export 'logging/provider_logger.dart';
 export 'routing/router_provider.dart';

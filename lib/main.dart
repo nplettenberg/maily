@@ -13,11 +13,9 @@ Future<void> main() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   const secureStorage = FlutterSecureStorage();
 
-  runApp(
-    ProviderScope(
-      observers: [
-        ProviderLogger(),
-      ],
+  ErrorCatcher(
+    child: ProviderScope(
+      observers: [ProviderLogger()],
       overrides: [
         storageProvider.overrideWithValue(sharedPreferences),
         secureStorageProvider.overrideWithValue(secureStorage),

@@ -8,8 +8,8 @@ const List<String> kOpenIdConnectScopes = [
   'email',
 ];
 
-class AuthorizationService {
-  const AuthorizationService();
+class GoogleAuthorizationService {
+  const GoogleAuthorizationService();
 
   Uri buildAuthorizationUrl({
     required String clientId,
