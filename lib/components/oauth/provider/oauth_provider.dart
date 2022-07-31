@@ -7,9 +7,9 @@ import 'package:maily/components/components.dart';
 part 'oauth_provider.freezed.dart';
 
 final oAuthProvider = Provider.family(
-  (ref, providerName) {
-    switch (providerName) {
-      case 'google':
+  (ref, accountType) {
+    switch (accountType) {
+      case AccountType.google:
       default:
         return googleOAuthProvider;
     }

@@ -49,8 +49,10 @@ final routesProvider = Provider<List<GoRoute>>((ref) {
                     name: OAuthPage.name,
                     path: 'oauth/:provider',
                     pageBuilder: (_, state) {
-                      final providerName = state.params['provider'];
-                      final provider = ref.read(oAuthProvider(providerName));
+                      final accountType =
+                          accountTypeByName(state.params['provider']!);
+
+                      final provider = ref.read(oAuthProvider(accountType));
 
                       return MaterialPage(
                         key: state.pageKey,

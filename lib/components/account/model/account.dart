@@ -8,6 +8,16 @@ enum AccountType {
   google,
 }
 
+AccountType? accountTypeByName(String name) {
+  try {
+    return AccountType.values.firstWhere(
+      (element) => element.name == name,
+    );
+  } on StateError {
+    return null;
+  }
+}
+
 @freezed
 class Account with _$Account {
   factory Account({

@@ -54,6 +54,28 @@ class AccountTile extends StatelessWidget {
 
   final Account account;
 
+  Widget _buildSubtitle() {
+    switch (account.accountType) {
+      case AccountType.google:
+        return const Text('Google account');
+      default:
+        return const SizedBox();
+    }
+  }
+
+  Widget _buildLeading(ThemeData theme) {
+    switch (account.accountType) {
+      case AccountType.google:
+        return Image.asset('assets/logo/gmail.png');
+      default:
+        return Icon(
+          Icons.mail_outlined,
+          size: 40,
+          color: theme.colorScheme.onPrimaryContainer,
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -62,14 +84,10 @@ class AccountTile extends StatelessWidget {
       child: ListTile(
         leading: Padding(
           padding: const EdgeInsets.all(8),
-          child: Icon(
-            Icons.mail_outlined,
-            size: 40,
-            color: theme.colorScheme.onPrimaryContainer,
-          ),
+          child: _buildLeading(theme),
         ),
         title: Text(account.address),
-        subtitle: const Text('*.strato.de'),
+        subtitle: _buildSubtitle(),
       ),
     );
   }
