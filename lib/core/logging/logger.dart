@@ -41,7 +41,5 @@ void setupLogger({
         }
       }
     },
-    onError: print,
-    onDone: () => print('logger stream done'),
   );
 }

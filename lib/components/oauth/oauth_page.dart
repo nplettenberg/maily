@@ -26,13 +26,11 @@ class OAuthPage extends ConsumerWidget {
       body: state.when<Widget>(
         initializing: () => const Center(child: CircularProgressIndicator()),
         authentication: (_) => const Center(child: CircularProgressIndicator()),
-        authorization: (redirectUrl, authorizationUrl) {
-          return OAuthWebView(
-            authorizationUrl: authorizationUrl,
-            redirectUrl: redirectUrl,
-            onSuccess: notifier.authenticate,
-          );
-        },
+        authorization: (redirectUrl, authorizationUrl) => OAuthWebView(
+          authorizationUrl: authorizationUrl,
+          redirectUrl: redirectUrl,
+          onSuccess: notifier.authenticate,
+        ),
         result: (result) => OAuthApproval(
           result: result,
           notifier: notifier,

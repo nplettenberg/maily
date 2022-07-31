@@ -32,11 +32,6 @@ final mailClientProvider = FutureProvider<MailClient>((ref) async {
         );
       },
       oauth: (token) {
-        log
-          ..info('--------------------------')
-          ..info(token)
-          ..info('--------------------------');
-
         return MailAccount.fromDiscoveredSettingsWithAuth(
           mailAccount.id,
           mailAccount.address,
