@@ -37,7 +37,7 @@ class GoogleAuthenticationService {
         );
 
         if (response['id_token'] != null) {
-          result.copyWith(
+          return result.copyWith(
             profile: GoogleProfile.fromJson(
               JwtDecoder.decode(response['id_token']),
             ),

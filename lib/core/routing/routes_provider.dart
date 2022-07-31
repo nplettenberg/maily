@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:maily/components/components.dart';
 
-final routesProvider = Provider<List<GoRoute>>((_) {
+final routesProvider = Provider<List<GoRoute>>((ref) {
   return [
     GoRoute(
       name: SplashPage.name,
@@ -44,6 +44,23 @@ final routesProvider = Provider<List<GoRoute>>((_) {
                     child: const AccountSetupPage(),
                   );
                 },
+                routes: [
+                  GoRoute(
+                    name: OAuthPage.name,
+                    path: 'oauth/:provider',
+                    pageBuilder: (_, state) {
+                      final providerName = state.params['provider'];
+                      final provider = ref.read(oAuthProvider(providerName));
+
+                      return MaterialPage(
+                        key: state.pageKey,
+                        child: OAuthPage(
+                          provider: provider,
+                        ),
+                      );
+                    },
+                  )
+                ],
               ),
             ],
           ),
