@@ -46,14 +46,34 @@ abstract class OAuthStateNotifier extends StateNotifier<OAuthState> {
   final AccountListNotifier _accountListNotifier;
   final OAuthClientCredentials credentials;
 
+  AccountType get accountType;
+
   Future<void> authorize();
 
   Future<void> authenticate(String authorizationCallback);
 
-  AccountType get accountType;
+  @protected
+  Future<OAuthToken> refreshToken({
+    required OAuthToken token,
+  });
 
-  void saveAccount(OAuthFlowResult result) {
-    _accountListNotifier.add(
+  /// Requests a fresh token and stores it into credentials storage
+  Future<OAuthToken> refresh({
+    required OAuthToken token,
+    required Account account,
+  }) async {
+    final newToken = await refreshToken(token: token);
+
+    await _accountListNotifier.update(
+      account,
+      AccountCredentials.oauth(token: newToken),
+    );
+
+    return newToken;
+  }
+
+  Future<void> saveAccount(OAuthFlowResult result) {
+    return _accountListNotifier.add(
       Account(
         id: Random().nextInt(100000).toString(),
         address: result.email,

@@ -56,6 +56,17 @@ final mailClientProvider = FutureProvider<MailClient>((ref) async {
       account,
       isLogEnabled: kDebugMode,
       logName: 'MailClient',
+      refresh: (client, expiredToken) async {
+        final providerRef = ref.read(oAuthProvider(mailAccount.accountType));
+        final provider = ref.read(providerRef.notifier);
+
+        final newToken = await provider.refresh(
+          token: OAuthToken.fromEnoughMail(expiredToken),
+          account: mailAccount,
+        );
+
+        return newToken.toEnoughMail();
+      },
     );
 
     log.info('created client $client');

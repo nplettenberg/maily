@@ -15,37 +15,35 @@ class OAuthApproval extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('Welcome'),
-          const SizedBox(height: 8),
-          Text(
-            result.email,
-            style: theme.textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                child: const Text('Dismiss'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Add'),
-                onPressed: () {
-                  notifier.saveAccount(result);
-                  context.goNamed(AccountListPage.name);
-                },
-              ),
-            ],
-          )
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Welcome'),
+        const SizedBox(height: 8),
+        Text(
+          result.email,
+          style: theme.textTheme.bodyLarge,
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              child: const Text('Dismiss'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Add'),
+              onPressed: () {
+                notifier.saveAccount(result);
+                context.goNamed(AccountListPage.name);
+              },
+            ),
+          ],
+        )
+      ],
     );
   }
 }

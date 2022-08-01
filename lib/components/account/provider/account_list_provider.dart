@@ -60,5 +60,39 @@ class AccountListNotifier extends StateNotifier<BuiltList<Account>> {
         .toBuiltList();
   }
 
-  void remove(Account account) {}
+  Future<void> update(Account account, AccountCredentials credentials) async {
+    final accounts = _preferences
+        .getStringList('accounts')!
+        .map((e) => Account.fromJson(jsonDecode(e)))
+        .toBuiltList();
+
+    final newAccounts = accounts.rebuild((p0) {
+      final index = accounts.indexWhere((p0) => p0.id == account.id);
+
+      p0.removeAt(index);
+      p0.insert(index, account);
+    });
+
+    await _secureStorage.write(
+      key: account.id,
+      value: jsonEncode(credentials),
+    );
+
+    state = newAccounts;
+  }
+
+  Future<void> remove(Account account) async {
+    final newAccounts = state.rebuild(
+      (p0) => p0.removeWhere((p0) => p0.id == account.id),
+    );
+
+    await _secureStorage.delete(key: account.id);
+
+    await _preferences.setStringList(
+      'accounts',
+      newAccounts.map<String>((p0) => jsonEncode(p0)).toList(),
+    );
+
+    state = newAccounts;
+  }
 }

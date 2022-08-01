@@ -1,4 +1,5 @@
 import 'package:maily/api/api.dart';
+import 'package:maily/components/components.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockAuthenticationService extends Mock
@@ -6,3 +7,5 @@ class MockAuthenticationService extends Mock
 
 class MockAuthorizationService extends Mock
     implements GoogleAuthorizationService {}
+
+class MockAccountListNotifier extends Mock implements AccountListNotifier {}

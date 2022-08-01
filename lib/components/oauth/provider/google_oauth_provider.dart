@@ -88,6 +88,16 @@ class GoogleOAuthProvider extends OAuthStateNotifier with LoggerMixin {
     }
   }
 
+  @override
+  Future<OAuthToken> refreshToken({
+    required OAuthToken token,
+  }) {
+    return _authenticationService.refreshOAuthToken(
+      refreshToken: token.refreshToken,
+      callbackUrl: callbackUrl,
+    );
+  }
+
   String get callbackUrl =>
       '${credentials.clientId.split('.').reversed.join('.')}:/';
 
