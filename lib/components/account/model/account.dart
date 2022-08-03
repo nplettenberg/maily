@@ -6,6 +6,7 @@ part 'account.g.dart';
 
 enum AccountType {
   google,
+  manual,
 }
 
 AccountType? accountTypeByName(String name) {

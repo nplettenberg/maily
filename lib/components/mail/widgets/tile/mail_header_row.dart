@@ -11,7 +11,6 @@ class MailHeaderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat(DateFormat.ABBR_MONTH_WEEKDAY_DAY);
     final theme = Theme.of(context);
 
     return Row(
@@ -40,8 +39,23 @@ class MailHeaderRow extends StatelessWidget {
           ),
         ),
         const Expanded(child: SizedBox()),
-        Text(dateFormat.format(mail.receivedAt))
+        MailHeaderDate(date: mail.receivedAt)
       ],
     );
+  }
+}
+
+class MailHeaderDate extends StatelessWidget {
+  const MailHeaderDate({
+    required this.date,
+  });
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    final dateFormat = DateFormat(DateFormat.ABBR_MONTH_WEEKDAY_DAY);
+
+    return Text(dateFormat.format(date));
   }
 }

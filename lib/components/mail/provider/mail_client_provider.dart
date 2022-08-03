@@ -4,10 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:maily/components/components.dart';
 
-final mailClientProvider = FutureProvider<MailClient>((ref) async {
+final mailClientProvider =
+    FutureProvider.family<MailClient, Account?>((ref, mailAccount) async {
   final log = Logger('mailClientProvider');
-
-  final mailAccount = ref.watch(selectedAccountProvider);
 
   if (mailAccount == null) {
     throw Exception('No account selected!');
@@ -32,18 +31,14 @@ final mailClientProvider = FutureProvider<MailClient>((ref) async {
         );
       },
       oauth: (token) {
+        log.info('Persisted token expired: ${token.toEnoughMail().isExpired}');
+
         return MailAccount.fromDiscoveredSettingsWithAuth(
           mailAccount.id,
           mailAccount.address,
           OauthAuthentication(
             mailAccount.address,
-            OauthToken(
-              accessToken: token.accessToken,
-              refreshToken: token.refreshToken,
-              expiresIn: token.expiresIn,
-              scope: token.scope,
-              tokenType: token.tokenType,
-            ),
+            token.toEnoughMail(),
           ),
           config,
         );
@@ -57,6 +52,7 @@ final mailClientProvider = FutureProvider<MailClient>((ref) async {
       isLogEnabled: kDebugMode,
       logName: 'MailClient',
       refresh: (client, expiredToken) async {
+        log.info('refreshing token');
         final providerRef = ref.read(oAuthProvider(mailAccount.accountType));
         final provider = ref.read(providerRef.notifier);
 
@@ -64,6 +60,8 @@ final mailClientProvider = FutureProvider<MailClient>((ref) async {
           token: OAuthToken.fromEnoughMail(expiredToken),
           account: mailAccount,
         );
+
+        log.info('refreshed token $newToken');
 
         return newToken.toEnoughMail();
       },

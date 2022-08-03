@@ -10,7 +10,11 @@ class MailOverviewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mails = ref.watch(mailInboxProvider);
+    final mails = ref.watch(
+      mailInboxProvider(
+        ref.watch(selectedAccountProvider),
+      ),
+    );
 
     return Scaffold(
       body: CustomScrollView(
