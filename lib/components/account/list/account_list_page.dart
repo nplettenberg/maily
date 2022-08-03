@@ -46,31 +46,3 @@ class AccountListPage extends ConsumerWidget {
     );
   }
 }
-
-class AccountTile extends StatelessWidget {
-  const AccountTile({
-    required this.account,
-  });
-
-  final Account account;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return MailyCard(
-      child: ListTile(
-        leading: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Icon(
-            Icons.mail_outlined,
-            size: 40,
-            color: theme.colorScheme.onPrimaryContainer,
-          ),
-        ),
-        title: Text(account.address),
-        subtitle: const Text('*.strato.de'),
-      ),
-    );
-  }
-}
