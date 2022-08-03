@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maily/components/components.dart';
 
 class AccountSetupPage extends ConsumerWidget {
@@ -39,17 +40,12 @@ class AccountSetupPage extends ConsumerWidget {
               child: ElevatedButton(
                 child: const Text('Sign in with google!'),
                 onPressed: () async {
-                  final token =
-                      await ref.watch(googleAuthFlowProvider).authenticate();
-
-                  ref.watch(accountListProvider.notifier).add(
-                        Account(
-                          id: '123',
-                          address: 'test@gmail.com',
-                          accountType: AccountType.google,
-                        ),
-                        AccountCredentials.oauth(token: token),
-                      );
+                  context.goNamed(
+                    OAuthPage.name,
+                    params: {
+                      'provider': 'google',
+                    },
+                  );
                 },
               ),
             ),

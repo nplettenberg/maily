@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maily/components/components.dart';
 
 class MailOverviewPage extends ConsumerWidget {
@@ -9,13 +10,23 @@ class MailOverviewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mails = ref.watch(mailInboxProvider);
+    final mails = ref.watch(
+      mailInboxProvider(
+        ref.watch(selectedAccountProvider),
+      ),
+    );
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(
-            title: Text('Maily'),
+          SliverAppBar(
+            title: const Text('Maily'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.account_box_rounded),
+                onPressed: () => context.goNamed(AccountListPage.name),
+              ),
+            ],
           ),
           mails.when<Widget>(
               loading: () => const SliverFillRemaining(

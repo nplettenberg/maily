@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:maily/core/routing/router_provider.dart';
+import 'package:maily/core/core.dart';
 
 class MailyApp extends ConsumerWidget {
   const MailyApp();

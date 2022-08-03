@@ -6,6 +6,17 @@ part 'account.g.dart';
 
 enum AccountType {
   google,
+  manual,
+}
+
+AccountType? accountTypeByName(String name) {
+  try {
+    return AccountType.values.firstWhere(
+      (element) => element.name == name,
+    );
+  } on StateError {
+    return null;
+  }
 }
 
 @freezed
