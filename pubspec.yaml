@@ -18,7 +18,7 @@ dependencies:
   shared_preferences: ^2.0.15
   built_collection: ^5.1.1
   flutter_secure_storage: ^5.0.2
-  http: ^0.13.4
+  http: ^0.13.5
   logging: ^1.0.2
   jwt_decoder: ^2.0.1
   webview_flutter: ^3.0.4
