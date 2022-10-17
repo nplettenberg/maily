@@ -32,7 +32,7 @@ dev_dependencies:
   freezed: ^2.1.0+1
   mocktail: ^0.3.0
 
-  json_serializable: ^6.3.1
+  json_serializable: ^6.5.2
 
 flutter:
   uses-material-design: true
